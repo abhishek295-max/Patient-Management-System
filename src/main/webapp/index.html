@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMS+ | Patient Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07101d;
+            --bg-2: #0b1730;
+            --panel: rgba(12, 21, 39, 0.78);
+            --panel-strong: rgba(15, 27, 51, 0.92);
+            --text: #edf4ff;
+            --muted: #b5c5df;
+            --line: rgba(173, 193, 255, 0.14);
+            --primary: #7ce6ff;
+            --secondary: #8b93ff;
+            --accent: #76f1c4;
+            --glow: rgba(124, 230, 255, 0.2);
+            --radius: 28px;
+            --shadow: 0 26px 80px rgba(2, 8, 20, 0.55);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Manrope', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 12% 18%, rgba(124, 230, 255, 0.18), transparent 26%),
+                radial-gradient(circle at 86% 14%, rgba(139, 147, 255, 0.16), transparent 24%),
+                radial-gradient(circle at 78% 84%, rgba(118, 241, 196, 0.12), transparent 24%),
+                linear-gradient(135deg, #050a13 0%, #091225 42%, #0b1730 100%);
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            width: 42rem;
+            height: 42rem;
+            border-radius: 50%;
+            filter: blur(30px);
+            pointer-events: none;
+            opacity: 0.18;
+            z-index: 0;
+        }
+
+        body::before {
+            top: -16rem;
+            left: -14rem;
+            background: radial-gradient(circle, rgba(124, 230, 255, 0.95), transparent 62%);
+            animation: drift 18s ease-in-out infinite;
+        }
+
+        body::after {
+            right: -16rem;
+            bottom: -14rem;
+            background: radial-gradient(circle, rgba(139, 147, 255, 0.95), transparent 62%);
+            animation: drift 24s ease-in-out infinite reverse;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+        }
+
+        .wrap {
+            width: min(1240px, calc(100% - 36px));
+            margin: 0 auto;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            border-bottom: 1px solid rgba(173, 193, 255, 0.12);
+            background: rgba(7, 13, 25, 0.68);
+            backdrop-filter: blur(18px);
+        }
+
+        .header-inner {
+            min-height: 82px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+        }
+
+        .brand-badge {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            color: #07111d;
+            background: linear-gradient(135deg, #9befff, #8c96ff);
+            box-shadow: 0 16px 34px rgba(124, 147, 255, 0.3);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav a {
+            padding: 10px 14px;
+            border-radius: 999px;
+            color: var(--muted);
+            font-weight: 700;
+            transition: 0.25s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--text);
+            background: rgba(124, 230, 255, 0.12);
+        }
+
+        .action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 18px;
+            border-radius: 999px;
+            font-weight: 800;
+            border: 1px solid transparent;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        }
+
+        .action:hover {
+            transform: translateY(-2px);
+        }
+
+        .action.primary {
+            color: #07111d;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 18px 36px rgba(124, 147, 255, 0.25);
+        }
+
+        .action.secondary {
+            color: var(--text);
+            border-color: rgba(173, 193, 255, 0.16);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .action.about {
+            color: #04111d;
+            background: linear-gradient(135deg, #76f1c4, #9befff);
+            box-shadow: 0 18px 36px rgba(118, 241, 196, 0.18);
+        }
+
+        .hero {
+            padding: 44px 0 20px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.08fr 0.92fr;
+            gap: 28px;
+            align-items: center;
+            min-height: calc(100vh - 110px);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(124, 230, 255, 0.18);
+            background: rgba(124, 230, 255, 0.08);
+            color: #dbf9ff;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            margin-bottom: 18px;
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 0 8px rgba(118, 241, 196, 0.12);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 5.8vw, 5.6rem);
+            line-height: 0.96;
+            letter-spacing: -0.06em;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 .accent {
+            background: linear-gradient(135deg, #9befff, #8c96ff 50%, #76f1c4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .type-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .type-text {
+            color: var(--text);
+        }
+
+        .type-caret {
+            width: 2px;
+            height: 18px;
+            background: var(--primary);
+            animation: blink 1s steps(1) infinite;
+        }
+
+        .hero p {
+            max-width: 60ch;
+            color: var(--muted);
+            font-size: 1.03rem;
+            line-height: 1.85;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .hero-points {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .point {
+            padding: 16px 18px;
+            border-radius: 22px;
+            border: 1px solid rgba(173, 193, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+        }
+
+        .point strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 1.06rem;
+        }
+
+        .point span {
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 0.96rem;
+        }
+
+        .dashboard {
+            position: relative;
+            padding: 24px;
+            border-radius: calc(var(--radius) + 10px);
+            border: 1px solid rgba(173, 193, 255, 0.14);
+            background: linear-gradient(180deg, rgba(17, 28, 51, 0.94), rgba(10, 17, 30, 0.92));
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .dashboard::before {
+            content: "";
+            position: absolute;
+            inset: auto -12% -22% auto;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(124, 230, 255, 0.2), transparent 68%);
+            pointer-events: none;
+        }
+
+        .dashboard-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(118, 241, 196, 0.12);
+            color: #dbffef;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .tiny-bars {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+            height: 28px;
+        }
+
+        .tiny-bars span {
+            width: 6px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #9befff, #8c96ff);
+            animation: bounce 1.5s ease-in-out infinite;
+        }
+
+        .tiny-bars span:nth-child(1) { height: 10px; animation-delay: 0s; }
+        .tiny-bars span:nth-child(2) { height: 18px; animation-delay: 0.1s; }
+        .tiny-bars span:nth-child(3) { height: 26px; animation-delay: 0.2s; }
+        .tiny-bars span:nth-child(4) { height: 14px; animation-delay: 0.3s; }
+        .tiny-bars span:nth-child(5) { height: 22px; animation-delay: 0.4s; }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .metric {
+            border-radius: 24px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(173, 193, 255, 0.12);
+        }
+
+        .metric span {
+            display: block;
+            color: var(--muted);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .metric strong {
+            display: block;
+            font-size: 1.7rem;
+            letter-spacing: -0.05em;
+        }
+
+        .timeline {
+            display: grid;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(173, 193, 255, 0.1);
+        }
+
+        .timeline-item span {
+            color: var(--muted);
+        }
+
+        .signal {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 0 8px rgba(118, 241, 196, 0.09);
+        }
+
+        .stats {
+            padding: 8px 0 26px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .stat {
+            padding: 22px;
+            border-radius: 24px;
+            border: 1px solid rgba(173, 193, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 18px 50px rgba(2, 8, 20, 0.16);
+        }
+
+        .stat strong {
+            display: block;
+            font-size: clamp(2rem, 3.1vw, 3rem);
+            letter-spacing: -0.06em;
+            margin-bottom: 8px;
+        }
+
+        .stat span {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .section {
+            padding: 22px 0 74px;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 0.98fr 1.02fr;
+            gap: 16px;
+        }
+
+        .about-card {
+            position: relative;
+            padding: 26px;
+            border-radius: 28px;
+            border: 1px solid rgba(173, 193, 255, 0.12);
+            background: linear-gradient(180deg, rgba(18, 30, 55, 0.9), rgba(10, 18, 34, 0.9));
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .about-card::before {
+            content: "";
+            position: absolute;
+            inset: auto -100px -120px auto;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(118, 241, 196, 0.16), transparent 70%);
+            pointer-events: none;
+        }
+
+        .about-card h3 {
+            font-size: 1.45rem;
+            margin-bottom: 12px;
+        }
+
+        .about-card p {
+            color: var(--muted);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .about-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(124, 230, 255, 0.08);
+            border: 1px solid rgba(124, 230, 255, 0.16);
+            color: #dbf9ff;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .about-name {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            letter-spacing: -0.05em;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .about-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(118, 241, 196, 0.1);
+            border: 1px solid rgba(118, 241, 196, 0.18);
+            color: #d7fff2;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .about-points {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .about-point {
+            padding: 16px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(173, 193, 255, 0.1);
+        }
+
+        .about-point strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .about-point span {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        .section-head h2 {
+            font-size: clamp(2rem, 3vw, 3.25rem);
+            letter-spacing: -0.05em;
+            line-height: 1.02;
+        }
+
+        .section-head p {
+            max-width: 52ch;
+            color: var(--muted);
+            line-height: 1.75;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            position: relative;
+            padding: 24px;
+            border-radius: 26px;
+            border: 1px solid rgba(173, 193, 255, 0.12);
+            background: linear-gradient(180deg, rgba(18, 30, 55, 0.88), rgba(10, 18, 34, 0.88));
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.28s ease, border-color 0.28s ease, background 0.28s ease;
+            transform-style: preserve-3d;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(124, 230, 255, 0.22);
+            background: linear-gradient(180deg, rgba(20, 36, 64, 0.95), rgba(11, 18, 34, 0.94));
+        }
+
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 16px;
+            font-weight: 900;
+            color: #07111d;
+            background: linear-gradient(135deg, #9befff, #8c96ff);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--muted);
+            line-height: 1.75;
+        }
+
+        .workflow {
+            display: grid;
+            grid-template-columns: 0.92fr 1.08fr;
+            gap: 18px;
+            margin-top: 24px;
+        }
+
+        .panel {
+            padding: 24px;
+            border-radius: 28px;
+            border: 1px solid rgba(173, 193, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow);
+        }
+
+        .list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .list-item {
+            padding: 18px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(173, 193, 255, 0.1);
+        }
+
+        .list-item strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .list-item span {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .cta-panel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 32px;
+            padding: 30px;
+            border: 1px solid rgba(124, 230, 255, 0.14);
+            background:
+                radial-gradient(circle at top right, rgba(124, 230, 255, 0.16), transparent 25%),
+                linear-gradient(135deg, rgba(15, 28, 52, 0.98), rgba(9, 18, 32, 0.98));
+            box-shadow: var(--shadow);
+        }
+
+        .cta-panel h2 {
+            font-size: clamp(2rem, 3vw, 3.2rem);
+            line-height: 1.02;
+            margin-bottom: 12px;
+        }
+
+        .cta-panel p {
+            max-width: 60ch;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .cta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        .footer {
+            padding: 30px 0 42px;
+            color: var(--muted);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding-top: 22px;
+            border-top: 1px solid rgba(173, 193, 255, 0.12);
+        }
+
+        .footer strong {
+            color: var(--text);
+            letter-spacing: 0.08em;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%) translateY(150%);
+            padding: 14px 18px;
+            border-radius: 999px;
+            background: rgba(8, 15, 28, 0.94);
+            border: 1px solid rgba(124, 230, 255, 0.16);
+            box-shadow: var(--shadow);
+            color: var(--text);
+            opacity: 0;
+            transition: transform 0.32s ease, opacity 0.32s ease;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .spotlight {
+            position: fixed;
+            width: 520px;
+            height: 520px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(124, 230, 255, 0.12), transparent 60%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes drift {
+            50% {
+                transform: translate3d(18px, 14px, 0) scale(1.06);
+            }
+        }
+
+        @keyframes pulse {
+            50% {
+                transform: scale(0.82);
+                box-shadow: 0 0 0 12px rgba(118, 241, 196, 0.05);
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes bounce {
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @media (max-width: 1100px) {
+            .hero-grid,
+            .workflow {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid,
+            .cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 760px) {
+            .wrap {
+                width: min(100% - 24px, 1240px);
+            }
+
+            .header-inner {
+                min-height: auto;
+                padding: 14px 0;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav {
+                justify-content: flex-start;
+            }
+
+            .hero {
+                padding-top: 28px;
+            }
+
+            .hero-grid {
+                min-height: auto;
+            }
+
+            .hero-points,
+            .stats-grid,
+            .cards,
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-head,
+            .footer-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .action,
+            .hero-actions .action {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="spotlight" id="spotlight"></div>
+<div class="page">
+    <header class="header">
+        <div class="wrap header-inner">
+            <a class="brand" href="#hero">
+                <span class="brand-badge">P</span>
+                <span>PMS+</span>
+            </a>
+            <nav class="nav" id="nav">
+                <a href="#hero" class="active">Home</a>
+                <a href="#services">Services</a>
+                <a href="#about">About</a>
+                <a href="#workflow">Workflow</a>
+                <a href="contact.jsp">Contact</a>
+            </nav>
+            <a class="action primary" href="adminLogin.jsp">Admin Login</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="hero">
+            <div class="wrap hero-grid">
+                <div class="reveal">
+                    <div class="eyebrow"><span class="pulse-dot"></span><span>Smart healthcare operations</span></div>
+                    <div class="type-row">
+                        <span class="type-text" id="typedText">Faster patient coordination</span>
+                        <span class="type-caret"></span>
+                    </div>
+                    <h1>
+                        A <span class="accent">beautiful</span> patient management system built for speed.
+                    </h1>
+                    <p>
+                        Manage records, appointments, prescriptions, and daily hospital workflows in one focused interface.
+                        PMS+ is designed to feel premium, responsive, and effortless on every device.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="action primary" href="#services">Explore services</a>
+                        <a class="action secondary" href="#workflow">See workflow</a>
+                        <a class="action about" href="#about">About developer</a>
+                    </div>
+                    <div class="hero-points">
+                        <div class="point">
+                            <strong>Live dashboards</strong>
+                            <span>Track active activity with instant visibility.</span>
+                        </div>
+                        <div class="point">
+                            <strong>Secure records</strong>
+                            <span>Keep patient details organized and accessible.</span>
+                        </div>
+                        <div class="point">
+                            <strong>Fast actions</strong>
+                            <span>Reduce clicks with a cleaner operational flow.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard reveal" data-tilt>
+                    <div class="dashboard-head">
+                        <div class="chip"><span class="signal"></span><span>System live</span></div>
+                        <div class="tiny-bars" aria-hidden="true">
+                            <span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="metric-grid">
+                        <div class="metric">
+                            <span>Appointments today</span>
+                            <strong data-count="128">0</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Waiting patients</span>
+                            <strong data-count="16">0</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Success rate</span>
+                            <strong data-count="99" data-suffix="%">0</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Active doctors</span>
+                            <strong data-count="24">0</strong>
+                        </div>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div>
+                                <strong>Patient intake synced</strong>
+                                <span>New registration flow updated 2 minutes ago</span>
+                            </div>
+                            <span>02m</span>
+                        </div>
+                        <div class="timeline-item">
+                            <div>
+                                <strong>Pharmacy queue cleared</strong>
+                                <span>Medication requests processed smoothly</span>
+                            </div>
+                            <span>09m</span>
+                        </div>
+                        <div class="timeline-item">
+                            <div>
+                                <strong>Reports exported</strong>
+                                <span>Admin summary ready for review</span>
+                            </div>
+                            <span>15m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="wrap stats-grid">
+                <div class="stat reveal">
+                    <strong data-count="1500">0</strong>
+                    <span>patients managed with clarity and faster access</span>
+                </div>
+                <div class="stat reveal">
+                    <strong data-count="250">0</strong>
+                    <span>doctors supported by a smoother operational layer</span>
+                </div>
+                <div class="stat reveal">
+                    <strong data-count="750">0</strong>
+                    <span>appointments coordinated without unnecessary friction</span>
+                </div>
+                <div class="stat reveal">
+                    <strong data-count="99" data-suffix="%">0</strong>
+                    <span>availability aimed at a confident clinical workflow</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="services">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <div>
+                        <h2>Core services, designed as a system not a list.</h2>
+                    </div>
+                    <p>
+                        Each module is presented as a functional part of the workflow, with visual hierarchy that
+                        makes the product feel active rather than static.
+                    </p>
+                </div>
+                <div class="cards">
+                    <article class="card reveal" data-tilt>
+                        <div class="card-icon">01</div>
+                        <h3>Patient Records</h3>
+                        <p>Store patient details, medical history, and updates in a structure that feels fast and searchable.</p>
+                    </article>
+                    <article class="card reveal" data-tilt>
+                        <div class="card-icon">02</div>
+                        <h3>Appointments</h3>
+                        <p>Handle scheduling, rescheduling, and daily flow with a compact interface that stays easy to scan.</p>
+                    </article>
+                    <article class="card reveal" data-tilt>
+                        <div class="card-icon">03</div>
+                        <h3>Prescriptions</h3>
+                        <p>Digitize treatment details so the admin side remains consistent, traceable, and organized.</p>
+                    </article>
+                    <article class="card reveal" data-tilt>
+                        <div class="card-icon">04</div>
+                        <h3>Reports</h3>
+                        <p>Surface useful metrics and exports in a format that feels modern and decision ready.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="about">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <div>
+                        <h2>About the developer.</h2>
+                    </div>
+                    <p>
+                        A clear identity section helps the product feel complete and gives the landing page a more professional, human touch.
+                    </p>
+                </div>
+
+                <div class="about-grid">
+                    <article class="about-card reveal" data-tilt>
+                        <div class="about-badge">Developer profile</div>
+                        <div class="about-name">Abhishek Samadhiya</div>
+                        <div class="about-role">Full Stack Java Developer</div>
+                        <h3>Building practical software with a polished interface.</h3>
+                        <p>
+                            Abhishek Samadhiya focuses on building reliable Java-based systems with responsive front ends,
+                            clean workflows, and user interfaces that feel modern in real usage.
+                        </p>
+                        <p>
+                            This patient management system reflects a full-stack mindset: clear structure, useful actions,
+                            and a visual language that supports efficiency without sacrificing presentation.
+                        </p>
+                    </article>
+
+                    <article class="about-card reveal" data-tilt>
+                        <div class="about-badge">What this project shows</div>
+                        <div class="about-points">
+                            <div class="about-point">
+                                <strong>Backend discipline</strong>
+                                <span>JSP, Servlet and JDBC workflows designed for structured patient data handling.</span>
+                            </div>
+                            <div class="about-point">
+                                <strong>UI craftsmanship</strong>
+                                <span>Premium dashboard styling with motion, depth, and responsive layouts.</span>
+                            </div>
+                            <div class="about-point">
+                                <strong>Practical flow</strong>
+                                <span>Focused navigation that keeps admin tasks easy to reach and simple to complete.</span>
+                            </div>
+                            <div class="about-point">
+                                <strong>Professional polish</strong>
+                                <span>Consistent design choices that make the application feel production-ready.</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="workflow">
+            <div class="wrap">
+                <div class="section-head reveal">
+                    <div>
+                        <h2>Workflow that feels live.</h2>
+                    </div>
+                    <p>
+                        The interface updates with motion, visible states, and small details that make the page feel
+                        active instead of static.
+                    </p>
+                </div>
+
+                <div class="workflow">
+                    <div class="panel reveal">
+                        <div class="list">
+                            <div class="list-item">
+                                <strong>1. Register quickly</strong>
+                                <span>Capture patient information with a minimal path from arrival to record creation.</span>
+                            </div>
+                            <div class="list-item">
+                                <strong>2. Assign instantly</strong>
+                                <span>Route the patient to the right doctor or department without extra steps.</span>
+                            </div>
+                            <div class="list-item">
+                                <strong>3. Update in real time</strong>
+                                <span>Keep appointment and prescription states visible to staff throughout the day.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cta-panel reveal">
+                        <h2>Turn your hospital portal into a polished control center.</h2>
+                        <p>
+                            The landing page is intentionally bold, with motion and depth that make the system feel modern.
+                            You can connect this shell to your backend screens and keep the same visual language.
+                        </p>
+                        <div class="cta-row">
+                            <a class="action primary" href="contact.jsp">Contact us</a>
+                            <a class="action secondary" href="#hero">Back to top</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-inner">
+            <div>
+                <strong>PMS+</strong>
+                <div>Modern patient management for hospitals and clinics.</div>
+            </div>
+            <div>2026 Made by Abhishek Samadhiya</div>
+        </div>
+    </footer>
+</div>
+
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<script>
+    const spotlight = document.getElementById('spotlight');
+    const toast = document.getElementById('toast');
+    const typedText = document.getElementById('typedText');
+    const navLinks = Array.from(document.querySelectorAll('#nav a'));
+    const revealItems = Array.from(document.querySelectorAll('.reveal'));
+    const countNodes = Array.from(document.querySelectorAll('[data-count]'));
+    const phrases = [
+        'Faster patient coordination',
+        'Cleaner appointment flow',
+        'Real-time hospital visibility',
+        'Smarter admin control'
+    ];
+
+    let phraseIndex = 0;
+
+    const showToast = (text) => {
+        toast.textContent = text;
+        toast.classList.add('show');
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => toast.classList.remove('show'), 2200);
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                if (entry.target.matches('[data-count]') && !entry.target.dataset.done) {
+                    animateCount(entry.target);
+                    entry.target.dataset.done = '1';
+                }
+            }
+        });
+    }, { threshold: 0.2 });
+
+    revealItems.forEach((item) => observer.observe(item));
+    countNodes.forEach((item) => observer.observe(item));
+
+    const animateCount = (node) => {
+        const target = Number(node.dataset.count || 0);
+        const suffix = node.dataset.suffix || '';
+        const duration = 1400;
+        const start = performance.now();
+
+        const step = (now) => {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            node.textContent = `${Math.round(target * eased).toLocaleString()}${suffix}`;
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            }
+        };
+
+        requestAnimationFrame(step);
+    };
+
+    const updatePhrase = () => {
+        typedText.animate(
+            [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
+            { duration: 320, easing: 'ease-out' }
+        );
+        typedText.textContent = phrases[phraseIndex];
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+    };
+
+    updatePhrase();
+    setInterval(updatePhrase, 2600);
+
+    window.addEventListener('mousemove', (event) => {
+        spotlight.style.left = `${event.clientX}px`;
+        spotlight.style.top = `${event.clientY}px`;
+    });
+
+    const activeOnScroll = () => {
+        const sections = ['hero', 'services', 'about', 'workflow'].map((id) => document.getElementById(id));
+        const offset = window.innerHeight * 0.35;
+        let current = 'hero';
+
+        sections.forEach((section) => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= offset && rect.bottom >= offset) {
+                current = section.id;
+            }
+        });
+
+        navLinks.forEach((link) => {
+            const target = link.getAttribute('href').replace('#', '');
+            link.classList.toggle('active', target === current);
+        });
+    };
+
+    window.addEventListener('scroll', activeOnScroll, { passive: true });
+    activeOnScroll();
+
+    document.querySelectorAll('[data-tilt]').forEach((card) => {
+        let frame = null;
+
+        const reset = () => {
+            card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
+        };
+
+        card.addEventListener('mousemove', (event) => {
+            const rect = card.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) - 0.5;
+            const y = ((event.clientY - rect.top) / rect.height) - 0.5;
+
+            if (frame) {
+                cancelAnimationFrame(frame);
+            }
+
+            frame = requestAnimationFrame(() => {
+                card.style.transform = `translateY(-8px) rotateX(${(-y * 8).toFixed(2)}deg) rotateY(${(x * 10).toFixed(2)}deg)`;
+            });
+        });
+
+        card.addEventListener('mouseleave', reset);
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+        link.addEventListener('click', () => {
+            if (link.getAttribute('href') !== '#hero') {
+                showToast('Jumped to section');
+            }
+        });
+    });
+</script>
+</body>
+</html>
