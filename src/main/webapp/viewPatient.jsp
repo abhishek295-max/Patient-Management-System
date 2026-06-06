@@ -678,7 +678,7 @@
                 </p>
                 <div class="hero-actions">
                     <a class="button button-primary" href="addPatient.jsp">Add New Patient</a>
-                    <a class="button button-secondary" href="dashboard.jsp">Back to Dashboard</a>
+                    <a class="button button-secondary" href="dashboard">Back to Dashboard</a>
                 </div>
             </section>
 

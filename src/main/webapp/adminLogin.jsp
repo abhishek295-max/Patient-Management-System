@@ -23,7 +23,7 @@
 
     String adminUsername = (String) session.getAttribute("adminUsername");
     if (adminUsername != null && !adminUsername.trim().isEmpty()) {
-        response.sendRedirect("dashboard.jsp");
+        response.sendRedirect(request.getContextPath() + "/dashboard");
         return;
     }
 
@@ -43,7 +43,7 @@
 
             if (rs.next()) {
                 session.setAttribute("adminUsername", rs.getString("username"));
-                response.sendRedirect("dashboard.jsp");
+                response.sendRedirect(request.getContextPath() + "/dashboard");
                 return;
             }
 

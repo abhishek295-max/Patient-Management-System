@@ -558,7 +558,7 @@
                     <div class="actions">
                         <button type="submit" class="btn btn-primary">Save Patient</button>
                         <button type="reset" class="btn btn-secondary">Clear Form</button>
-                        <a href="dashboard.jsp" class="btn btn-secondary btn-link">Back to Dashboard</a>
+                        <a href="dashboard" class="btn btn-secondary btn-link">Back to Dashboard</a>
                     </div>
 
                     <p class="helper">All fields are required. Keep the record accurate to support follow-up and treatment.</p>

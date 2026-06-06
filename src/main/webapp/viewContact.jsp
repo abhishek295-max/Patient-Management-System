@@ -394,7 +394,7 @@ tbody td{
             <p>Review customer messages, prioritize responses, and keep the support queue organized.</p>
         </div>
         <div class="actions">
-            <a class="btn secondary" href="dashboard.jsp">Back to Dashboard</a>
+            <a class="btn secondary" href="dashboard">Back to Dashboard</a>
             <a class="btn primary" href="contact.jsp">Open Contact Form</a>
         </div>
     </header>

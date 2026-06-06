@@ -198,7 +198,7 @@ p{
     <div class="notice"><strong>Details:</strong> <%= message %></div>
     <div class="actions">
         <a class="btn primary" href="viewContact.jsp">Back to Contact Messages</a>
-        <a class="btn secondary" href="dashboard.jsp">Back to Dashboard</a>
+        <a class="btn secondary" href="dashboard">Back to Dashboard</a>
         <a class="btn danger" href="contact.jsp">Open Contact Form</a>
     </div>
     <div class="footer">This confirmation page keeps the contact-delete flow consistent with the rest of the dashboard UI.</div>

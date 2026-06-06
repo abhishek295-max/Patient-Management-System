@@ -442,7 +442,7 @@ select:focus{
         </div>
         <div class="top-actions">
             <a class="btn secondary" href="viewPatient.jsp">Patient List</a>
-            <a class="btn secondary" href="dashboard.jsp">Back to Dashboard</a>
+            <a class="btn secondary" href="dashboard">Back to Dashboard</a>
             <a class="btn danger" href="index.html">Logout</a>
         </div>
     </header>
@@ -532,7 +532,7 @@ select:focus{
                 <h2><%= errorMessage != null ? esc(errorMessage) : "Patient record not found." %></h2>
                 <p>You can return to the dashboard or open the patient list to choose another record.</p>
                 <div class="actions" style="margin-top:18px;justify-content:center">
-                    <a class="btn primary" href="dashboard.jsp">Back to Dashboard</a>
+                    <a class="btn primary" href="dashboard">Back to Dashboard</a>
                     <a class="btn secondary" href="viewPatient.jsp">Patient List</a>
                 </div>
             </div>
@@ -572,7 +572,7 @@ select:focus{
             <div class="actions">
                 <button class="btn primary" type="submit">Update Patient</button>
                 <button class="btn secondary" type="reset">Reset Changes</button>
-                <a class="btn secondary" href="dashboard.jsp">Back to Dashboard</a>
+                <a class="btn secondary" href="dashboard">Back to Dashboard</a>
             </div>
 
             <div class="notice">
