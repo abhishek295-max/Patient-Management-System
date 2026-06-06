@@ -1,12 +1,64 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*" %>
+<%@ include file="db.jsp" %>
+<%!
+    private String escapeHtml(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&#39;");
+    }
+%>
 <%
     String user = request.getParameter("username");
     String pass = request.getParameter("password");
-    if(user != null && pass != null && user.equals("abhishek") && pass.equals("26122005")){
-        response.sendRedirect("dashboard.jsp");
-        return;
+    boolean submitted = "POST".equalsIgnoreCase(request.getMethod());
+    boolean failed = false;
+    String errorMessage = null;
+
+    if (submitted && user != null && pass != null) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            ps = con.prepareStatement(
+                "SELECT id, username FROM admin WHERE username = ? AND password = ? LIMIT 1"
+            );
+            ps.setString(1, user.trim());
+            ps.setString(2, pass);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                session.setAttribute("adminUsername", rs.getString("username"));
+                session.setAttribute("adminId", rs.getInt("id"));
+                response.sendRedirect("dashboard.jsp");
+                return;
+            }
+
+            failed = true;
+            errorMessage = "Invalid username or password";
+        } catch (Exception e) {
+            failed = true;
+            errorMessage = "Unable to verify admin login right now";
+        } finally {
+            try {
+                if (rs != null) rs.close();
+            } catch (Exception ignore) {}
+            try {
+                if (ps != null) ps.close();
+            } catch (Exception ignore) {}
+            try {
+                if (con != null) con.close();
+            } catch (Exception ignore) {}
+        }
     }
-    boolean failed = user != null || pass != null;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,12 +130,12 @@ svg{display:block}
       <p>Enter your credentials to continue.</p>
       <form method="post">
         <label>Username</label>
-        <input type="text" name="username" required>
+        <input type="text" name="username" value="<%= escapeHtml(user) %>" required>
         <label>Password</label>
         <input type="password" name="password" required>
         <button class="submit" type="submit">Login</button>
       </form>
-      <% if(failed){ %><div class="error">Invalid username or password</div><% } %>
+      <% if(failed){ %><div class="error"><%= errorMessage %></div><% } %>
       <div class="footer"><span>Patient Management System</span><span>Secure access</span></div>
     </section>
   </main>

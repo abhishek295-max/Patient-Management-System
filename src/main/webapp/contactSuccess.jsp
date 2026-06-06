@@ -197,7 +197,7 @@ p{
     </div>
     <div class="actions">
         <a class="btn primary" href="contact.jsp">Send another message</a>
-        <a class="btn secondary" href="dashboard.jsp">Back to Dashboard</a>
+        <a class="btn secondary" href="index.html">Back to HomePage</a>
     </div>
     <div class="footer">Your message flow is now connected to `saveContact.jsp` and ends on a branded success screen.</div>
 </main>
