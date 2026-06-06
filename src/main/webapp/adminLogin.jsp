@@ -21,6 +21,12 @@
     boolean failed = false;
     String errorMessage = null;
 
+    String adminUsername = (String) session.getAttribute("adminUsername");
+    if (adminUsername != null && !adminUsername.trim().isEmpty()) {
+        response.sendRedirect("dashboard.jsp");
+        return;
+    }
+
     if (submitted && user != null && pass != null) {
         Connection con = null;
         PreparedStatement ps = null;

@@ -2,6 +2,12 @@
 <%@ page import="java.sql.*" %>
 <%@ include file="db.jsp" %>
 <%
+    String adminUsername = (String) session.getAttribute("adminUsername");
+    if (adminUsername == null || adminUsername.trim().isEmpty()) {
+        response.sendRedirect("adminLogin.jsp");
+        return;
+    }
+
     int patientCount = 0;
     int contactCount = 0;
     int urgentContactCount = 0;
@@ -332,7 +338,7 @@ tbody td{padding:18px;color:#d7e3f5;vertical-align:top}
             <div class="live-chip"><span class="live-dot"></span><span>Database live</span></div>
             <span id="clock"></span>
             <a class="btn btn-secondary" href="viewContact.jsp">Messages</a>
-            <a class="btn btn-danger" href="index.html">Logout</a>
+            <a class="btn btn-danger" href="logout.jsp">Logout</a>
         </div>
     </header>
 
@@ -458,11 +464,11 @@ tbody td{padding:18px;color:#d7e3f5;vertical-align:top}
                     <strong>View contact messages</strong>
                     <span>Open the support inbox and manage incoming messages.</span>
                 </a>
-                <a class="shortcut" href="index.html">
-                    <i>&#9099;</i>
-                    <strong>Logout safely</strong>
-                    <span>Return to the public landing page instantly.</span>
-                </a>
+                    <a class="shortcut" href="logout.jsp">
+                        <i>&#9099;</i>
+                        <strong>Logout safely</strong>
+                        <span>Return to the public landing page instantly.</span>
+                    </a>
             </div>
         </div>
 
