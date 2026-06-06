@@ -29,7 +29,7 @@
         try {
             con = getConnection();
             ps = con.prepareStatement(
-                "SELECT id, username FROM admin WHERE username = ? AND password = ? LIMIT 1"
+                "SELECT username FROM admin WHERE username = ? AND password = ? LIMIT 1"
             );
             ps.setString(1, user.trim());
             ps.setString(2, pass);
@@ -37,7 +37,6 @@
 
             if (rs.next()) {
                 session.setAttribute("adminUsername", rs.getString("username"));
-                session.setAttribute("adminId", rs.getInt("id"));
                 response.sendRedirect("dashboard.jsp");
                 return;
             }
